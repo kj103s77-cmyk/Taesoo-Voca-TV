@@ -1,0 +1,42 @@
+name: Android Build
+
+on:
+  push:
+    branches: [ "main" ] # 코드가 main 브랜치에 올라올 때마다 실행
+
+jobs:
+  build:
+    runs-on: ubuntu-latest # 리눅스 가상 서버 환경에서 빌드
+    
+    steps:
+      # 1. 소스 코드 가져오기
+      - uses: actions/checkout@v3
+
+      # 2. 자바(JDK) 설정
+      - name: Set up Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+
+      # 3. 플러터(Flutter) 설정
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+
+      # 4. 패키지 설치
+      - name: Install dependencies
+        run: flutter pub get
+
+      # 5. APK 빌드
+      # 깃허브 Secrets에 저장한 GEMINI_API_KEY를 사용하여 빌드합니다.
+      - name: Build APK
+        run: flutter build apk --release --dart-define=GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }}
+
+      # 6. 생성된 APK 파일을 결과물로 업로드
+      - name: Upload APK
+        uses: actions/upload-artifact@v3
+        with:
+          name: release-apk # 다운로드 시 파일 이름
+          path: build/app/outputs/flutter-apk/app-release.apk
