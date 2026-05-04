@@ -4,7 +4,6 @@ on:
   push:
     branches: [ "main" ]
 
-# 경고 메시지에 나온 대로 Node.js 24 환경을 강제로 사용하도록 설정합니다.
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: 'true'
 
@@ -12,36 +11,27 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      # 1. 코드 체크아웃 (v4 최신 버전)
       - uses: actions/checkout@v4
 
-      # 2. 자바(JDK) 설정
       - name: Set up Java
         uses: actions/setup-java@v4
         with:
           distribution: 'zulu'
           java-version: '17'
 
-      # 3. 플러터(Flutter) 설정
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
+          # 에러 해결의 핵심: 음성 인식 패키지와 호환되는 버전으로 강제 고정
+          flutter-version: '3.22.2' 
           channel: 'stable'
 
-      # 4. 환경 진단 (에러 원인을 찾기 위해 추가)
-      - name: Flutter Doctor
-        run: flutter doctor
-
-      # 5. 패키지 설치
       - name: Install dependencies
         run: flutter pub get
 
-      # 6. APK 빌드
-      # 깃허브 Secrets에 저장된 GEMINI_API_KEY가 반드시 필요합니다.
       - name: Build APK
-        run: flutter build apk --release --dart-define=GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }}
+        run: flutter build apk --release --no-tree-shake-icons --dart-define=GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }}
 
-      # 7. 생성된 APK 업로드 (v4 최신 버전)
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
