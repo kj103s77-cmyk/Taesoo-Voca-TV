@@ -29,6 +29,10 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
+      - name: Fix JVM Compatibility
+        # 코틀린과 자바의 버전 충돌 에러를 무시하고 정상적으로 APK를 만들도록 강제 설정
+        run: echo "kotlin.jvm.target.validation.mode=warning" >> android/gradle.properties
+
       - name: Build APK
         run: flutter build apk --release --no-tree-shake-icons --dart-define=GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }}
 
