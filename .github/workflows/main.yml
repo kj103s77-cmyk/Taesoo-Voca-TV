@@ -4,33 +4,45 @@ on:
   push:
     branches: [ "main" ]
 
+# 경고 메시지에 나온 대로 Node.js 24 환경을 강제로 사용하도록 설정합니다.
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: 'true'
+
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      # 최신 v4 버전으로 업데이트됨
+      # 1. 코드 체크아웃 (v4 최신 버전)
       - uses: actions/checkout@v4
 
+      # 2. 자바(JDK) 설정
       - name: Set up Java
         uses: actions/setup-java@v4
         with:
           distribution: 'zulu'
           java-version: '17'
 
+      # 3. 플러터(Flutter) 설정
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
 
+      # 4. 환경 진단 (에러 원인을 찾기 위해 추가)
+      - name: Flutter Doctor
+        run: flutter doctor
+
+      # 5. 패키지 설치
       - name: Install dependencies
         run: flutter pub get
 
+      # 6. APK 빌드
+      # 깃허브 Secrets에 저장된 GEMINI_API_KEY가 반드시 필요합니다.
       - name: Build APK
-        # 깃허브 Secrets에 저장된 GEMINI_API_KEY를 사용합니다.
         run: flutter build apk --release --dart-define=GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }}
 
+      # 7. 생성된 APK 업로드 (v4 최신 버전)
       - name: Upload APK
-        # 최신 v4 버전으로 업데이트됨 (에러 해결 핵심)
         uses: actions/upload-artifact@v4
         with:
           name: release-apk
