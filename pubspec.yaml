@@ -1,0 +1,29 @@
+name: taesoo_voca
+description: "A new Flutter project."
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.2.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  # 구글 제미나이(Gemini) 공식 패키지
+  google_generative_ai: ^0.4.0
+  provider: ^6.1.1
+  sqflite: ^2.3.0
+  path: ^1.8.3
+  flutter_tts: ^3.8.5
+  speech_to_text: ^6.6.1
+  cupertino_icons: ^1.0.8
+  # 웹 브라우저에서도 데이터 저장이 가능하게 해주는 패키지 (필수 추가)
+  shared_preferences: ^2.2.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+
+flutter:
+  uses-material-design: true
